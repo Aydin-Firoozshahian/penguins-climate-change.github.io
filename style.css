@@ -1,0 +1,20 @@
+.pg-container {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    margin-bottom: 50px;
+}
+
+.text-container, .graph-container {
+    flex: 1;
+}
+
+.graph-container {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.pg-container:nth-child(odd) {
+    flex-direction: row-reverse;
+}
