@@ -1,146 +1,87 @@
-// using d3 for convenience
-var main = d3.select("main");
-var scrolly = main.select("#scrolly");
-var figure = scrolly.select("figure");
-var article = scrolly.select("article");
-var step = article.selectAll(".step");
-
-// initialize the scrollama
+// Initialize the scrollama instance
 var scroller = scrollama();
 
-// generic window resize listener event
-function handleResize() {
-    // 1. update height of step elements
-    var stepH = Math.floor(window.innerHeight * 0.75);
-    step.style("height", stepH + "px");
-    step.style("width", "250px")
-
-    var figureHeight = window.innerHeight / 2;
-    var figureMarginTop = (window.innerHeight - figureHeight) / 2;
-    
-    figure
-        .style("height", figureHeight + "px")
-        .style("top", figureMarginTop + "px");
-
-    // 3. tell scrollama to update new element dimensions
-    scroller.resize();
-}
-
-// scrollama event handlers
-
-var toolTipState = 'title';
-
-/*
-scrollama magic happens here:
-- based on the index, trigger a certiain function from d3-animations.js
-- sometimes only fire an event when going down or up in the story
-*/ 
 function handleStepEnter(response) {
-    
-    console.log(response);
     // response = { element, direction, index }
-    let currentIndex = response.index;
-    let currentDirection = response.direction;
+    let currentStep = d3.select(response.element);
+    let stepId = currentStep.attr("data-step");
     
-    // add color to current step only
-    step.classed("is-active", function(d, i) {
-        return i === currentIndex;
-    });
+    // Toggle reading step highlights
+    d3.selectAll(".step").classed("is-active", false);
+    currentStep.classed("is-active", true);
 
-    // update graphic based on step
-    switch(currentIndex){
-        case 0:
-            toolTipState = 'title';
-            if(currentDirection === 'up'){
-                dotColorGrey();
-            }
+    // Reset standard single graph visual states
+    d3.selectAll(".graph-container").classed("is-active", false);
+    d3.selectAll("#adelie-graphs-container .graph-container").classed("active-graph", false);
+
+    // Context trigger actions
+    switch(stepId) {
+        case "intro-1":
+            d3.select("#intro-graphs-container").classed("is-active", true);
             break;
-        case 1:
-            toolTipState = 'title score';
-            dotColorSentiment()
+        case "intro-2":
+            d3.select("#intro-graphs-container").classed("is-active", true);
+            // secondary progressive reveal adjustment
+            d3.select("#intro-graphs-container img").style("transform", "scale(1.03) rotate(0.5deg)");
             break;
-        case 2:
-            toolTipState = 'title score magnitude';
-            dotResize()
-            if(currentDirection === 'up'){
-                toggleAxesOpacity(true, false, 0)
-            }
+            
+        case "seaice-1":
+            d3.select("#seaice-graph-container").classed("is-active", true);
             break;
-        case 3:
-            dotPositionScore()
-            if(currentDirection === 'up'){
-                toggleAxesOpacity(false, true, 0)
-            }
+        case "seaice-2":
+            d3.select("#seaice-graph-container").classed("is-active", true);
+            d3.select("#seaice-graph-container img").style("transform", "scale(1.05) translateY(-10px)");
             break;
-        case 4:
-            dotPositionMagnitude()
-            if(currentDirection === 'up'){
-                toggleAxesOpacity(true, true, 1)
-            }else{
-                toggleAxesOpacity(false, true, 1)
-            }
+            
+        case "emperor-1":
+            d3.select("#emperor-graph-container").classed("is-active", true);
             break;
-        case 5:
-            dotSimplify()
-            if(currentDirection === 'up'){
-                hideStraightPath()
-            }else{
-                toggleAxesOpacity(true, true, 0)
-            }
+        case "emperor-2":
+            d3.select("#emperor-graph-container").classed("is-active", true);
+            d3.select("#emperor-graph-container img").style("filter", "brightness(1.1) contrast(1.05)");
             break;
-        case 6:
-            if(currentDirection === 'up'){
-                hideBezierPath()
-                toggleElementOpacity(line, 1)
-            }else{
-                drawStraightPath()
-            }
+            
+        case "adelie-1":
+            // Display first layout chart placeholder
+            d3.select("#graph-1-container").classed("active-graph", true).classed("is-active", true);
             break;
-        case 7:
-            toggleElementOpacity(line, 0.25)
-            if(currentDirection === 'up'){
-                toggleElementOpacity(bubbleChart, 1)
-            } else {
-                drawBezierPath();
-            }
+        case "adelie-2":
+            // Dynamically crossfades over to the second placeholder graph 
+            d3.select("#graph-2-container").classed("active-graph", true).classed("is-active", true);
             break;
-        case 8:
-            if(currentDirection === 'down'){
-                toggleElementOpacity(line, 0)
-                toggleElementOpacity(bubbleChart, 0)
-            }
+            
+        case "conclusion-1":
+            d3.select("#conclusion-graph-container").classed("is-active", true);
+            break;
+        case "conclusion-2":
+            d3.select("#conclusion-graph-container").classed("is-active", true);
+            d3.select("#conclusion-graph-container img").style("transform", "scale(1.05)");
+            break;
+            
         default:
             break;
     }
-
 }
 
-function setupStickyfill() {
-    d3.selectAll(".sticky").each(function() {
-        Stickyfill.add(this);
-    });
+function handleStepExit(response) {
+    if (response.direction === "up") {
+        // Clear customized transform styles on backward upward scrolls
+        d3.selectAll(".graph-container img").style("transform", null).style("filter", null);
+    }
 }
 
 function init() {
-    setupStickyfill();
-
-    // 1. force a resize on load to ensure proper dimensions are sent to scrollama
-    handleResize();
-
-    // 2. setup the scroller passing options
-    // 		this will also initialize trigger observations
-    // 3. bind scrollama event handlers (this can be chained like below)
     scroller
         .setup({
-            step: "#scrolly article .step",
-            offset: 0.5,
-            debug: false
+            step: ".step", // Track paragraph steps
+            offset: 0.55,  // Triggers action at 55% from the viewport top
+            debug: false   // Switch to true to overlay threshold lines
         })
-        .onStepEnter(handleStepEnter);
+        .onStepEnter(handleStepEnter)
+        .onStepExit(handleStepExit);
 
-    // setup resize event
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", () => scroller.resize());
 }
 
-// kick things off
+// Fire up scrollama
 init();
