@@ -17,7 +17,7 @@
             <p class="step" data-step="intro-2">scrollytelling check</p>
         </div>
         <div id="intro-graphs-container" class="graph-container">
-            <img src="images/visualizations/pg1-graph.png" alt="graphs for intro go here (total greenhouse gas concentrations and just CO2)">
+            <div class="viz" id="pg1-viz"></div>
         </div>
     </div>
     
@@ -77,12 +77,13 @@
         </div>
     </div>
 
-    <script src="src/d3.5.9.1.min.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="src/intersection-observer.js"></script>
     <script src="src/stickyfill.min.js"></script>
     <script src="src/scrollama.min.js"></script>
     <script src="data/aviciiTimData.js"></script>
     <script src="d3-animations.js"></script>
     <script src="scrollama-settings.js"></script>
+    <script src="src/pg1-viz.js"></script>
 </body>
 </html>
