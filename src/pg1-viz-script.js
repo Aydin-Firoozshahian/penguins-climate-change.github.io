@@ -1,5 +1,5 @@
 // Set the margin and dimensions
-const  margin = {top: 10, right: 30, bottom: 30, left: 60},
+const  margin = {top: 60, right: 40, bottom: 40, left: 60},
     width = 460 - margin.left - margin.right
     height = 400 - margin.top - margin.bottom;
 
@@ -8,8 +8,19 @@ const svg = d3.select("#pg1-viz")
     .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
+        .style("overflow", "visible")
     .append("g")
         .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+// Add the title
+svg.append("text")
+    .attr("x", (width / 2))
+    .attr("y", 0 - (margin.top / 2))
+    .style("text-anchor", "middle")
+    .style("font-size", "20px")
+    .style("font-weight", "bold")
+    .style("padding", "10px")
+    .text("Atmospheric CO2 Concentration (ppm) from 2003-2026")
 
 // read the data (for CO2)
 
@@ -18,9 +29,7 @@ d3.text("data/CO2-line-chart.csv").then(
         const filteredText = text.split("\n")
             .filter(line => !line.trim().startsWith("#"))
             .join("\n");
-        
-        console.log("Filtered text: " + filteredText);
-        
+                
         const data = d3.dsvFormat(";").parse(filteredText, function (d) {
             return {
                 date : d3.timeParse("%Y-%m")(d.time.trim()),
@@ -53,7 +62,7 @@ d3.text("data/CO2-line-chart.csv").then(
             .attr("d", d3.line()
                 .x(function(d) { return x(d.date) })
                 .y(function(d) { return y(d.value) })
-                )
+                )       
     }
 ).catch(function(error) {
     console.error("Error loading or parsing CSV data: " + error);
