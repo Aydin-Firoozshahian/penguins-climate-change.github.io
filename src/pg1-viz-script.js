@@ -16,7 +16,7 @@ d3.csv("src/CO2-line-chart.csv",
 
     // format the variables for the data in order to read it
     function(d){
-    return { date : d3.timeParse("%Y-%m-%d")(d.date), value : d.value }
+    return { date : d3.timeParse("%Y-%m")(d.date), value : d.value }
     }).then(
         
         // Actually use the data to draw the graph
