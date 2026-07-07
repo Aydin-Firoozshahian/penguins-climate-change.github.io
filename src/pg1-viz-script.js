@@ -20,7 +20,28 @@ svg.append("text")
     .style("font-size", "20px")
     .style("font-weight", "bold")
     .style("padding", "10px")
-    .text("Atmospheric CO2 Concentration (ppm) from 2003-2026")
+    .text("Atmospheric CO2 Concentration (ppm), 2003-2026")
+
+// Add the x axis and y axis labels
+
+// X axis
+svg.append("text")
+    .attr("class", "axis-label x-axis-label")
+    .attr("x", (width - margin.left - margin.right) / 2)
+    .attr("y", height + margin.bottom - 5)
+    .style("text-anchor", "middle")
+    .style("font-size", "14px")
+    .text("Time (Years)")
+
+// Y axis
+svg.append("text")
+    .attr("class", "axis-label y-axis-label")
+    .attr("x", -(margin.top + (height - margin.top - margin.bottom) / 2))
+    .attr("y", margin.left - 100)
+    .attr("transform", "rotate(-90)")
+    .style("text-anchor", "middle")
+    .style("font-size", "14px")
+    .text("CO2 Concentration (ppm)")
 
 // read the data (for CO2)
 
