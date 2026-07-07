@@ -20,7 +20,7 @@ svg.append("text")
     .style("font-size", "20px")
     .style("font-weight", "bold")
     .style("padding", "10px")
-    .text("Atmospheric CO2 Concentration (ppm), 2003-2026")
+    .text("Atmospheric CO2 and CH4 Concentrations (ppm), 2003-2026")
 
 // Add the x axis and y axis labels
 
@@ -47,6 +47,7 @@ svg.append("text")
 
 d3.text("data/CO2-line-chart.csv").then(
     function (text) {
+        // Remove the comments from the start of the file (lines that start with "#")
         const filteredText = text.split("\n")
             .filter(line => !line.trim().startsWith("#"))
             .join("\n");
@@ -79,6 +80,53 @@ d3.text("data/CO2-line-chart.csv").then(
             .datum(data)
             .attr("fill", "none")
             .attr("stroke", "steelblue")
+            .attr("stroke-width", 1.5)
+            .attr("d", d3.line()
+                .x(function(d) { return x(d.date) })
+                .y(function(d) { return y(d.value) })
+                )       
+    }
+).catch(function(error) {
+    console.error("Error loading or parsing CSV data: " + error);
+});
+
+// read the data for CH4
+
+d3.text("data/CH4-line-chart.csv").then(
+    function (text) {
+        const filteredText = text.split("\n")
+            .filter(line => !line.trim().startsWith("#"))
+            .join("\n");
+                
+        const data = d3.dsvFormat(";").parse(filteredText, function (d) {
+            return {
+                date : d3.timeParse("%Y-%m")(d.time.trim()),
+                value : +d["level [ppb]"]
+            };
+        });
+
+        // X axis (date format)
+        const x = d3.scaleTime()
+            .domain(d3.extent(data, function(d) { return d.date; }))
+            .range([0, width]);
+        // svg.append("g")
+        //     .attr("transform", `translate(0, ${height})`)
+        //     .call(d3.axisBottom(x));
+        
+        // Y axis
+        const y = d3.scaleLinear()
+            .domain(d3.extent(data, function(d) { return +d.value; }))
+            .range([ height, 0 ])
+            .nice();
+        svg.append("g")
+            .attr("transform", `translate(${width}, 0)`)
+            .call(d3.axisRight(y));
+
+        // Add the line
+        svg.append("path")
+            .datum(data)
+            .attr("fill", "none")
+            .attr("stroke", "orange")
             .attr("stroke-width", 1.5)
             .attr("d", d3.line()
                 .x(function(d) { return x(d.date) })
