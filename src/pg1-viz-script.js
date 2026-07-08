@@ -14,13 +14,64 @@ const svg = d3.select("#pg1-viz")
 
 // Add the title
 svg.append("text")
-    .attr("x", (width / 2))
+    .attr("x", (width / 2) - 12)
     .attr("y", 0 - (margin.top / 2))
     .style("text-anchor", "middle")
-    .style("font-size", "20px")
+    .style("font-size", "16px")
     .style("font-weight", "bold")
     .style("padding", "10px")
-    .text("Atmospheric CO2 and CH4 Concentrations (ppm), 2003-2026")
+    .text("Atmospheric CO2 and CH4 Concentrations (ppm/ppb), 2003-2026")
+
+// Add the legend
+const legendHeight = 0 - (margin.top / 2) + 20;
+const lineMarkers = svg.append("g");
+lineMarkers
+    .append("line")
+        .attr("x1", (width / 2) - margin.left - 60)
+        .attr("x2", (width / 2) - margin.left - 35)
+        .attr("y1", legendHeight)
+        .attr("y2", legendHeight)
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 1.5)
+lineMarkers
+    .append("line")
+        .attr("x1", (width / 2) - margin.left + 60)
+        .attr("x2", (width / 2) - margin.left + 85)
+        .attr("y1", legendHeight)
+        .attr("y2", legendHeight)
+        .attr("stroke", "#B87333")
+svg.append("text")
+    .attr("x", (width / 2) - margin.left - 30)
+    .attr("y", legendHeight+5)
+    .style("color", "black")
+    .text("CO2")
+svg.append("text")
+    .attr("x", (width / 2) - margin.left + 90)
+    .attr("y", legendHeight+5)
+    .style("color", "black")
+    .text("CH4")
+    
+
+// svg.append("text")
+//     .attr("x", (width / 2))
+//     .attr("y", 0 - (margin.top / 2) + 20)
+//     .style("text-anchor", "middle")
+//     .style("font-size", "16px")
+//     .style("padding", "10px")
+//     .append("tspan")
+//         .text("-")
+//         .style("fill", "steelblue")
+//     .append("tspan")
+//         .text("CO2")
+//         .attr("dx", "10px")
+//         .style("fill", "black")
+//     .append("tspan")
+//         .text("- ")
+//         .attr("dx", "50px")
+//         .style("fill", "#B87333")
+//     .append("tspan")
+//         .text("CH4")
+//         .style("fill", "black")
 
 // Add the x axis and y axis labels
 
@@ -33,7 +84,7 @@ svg.append("text")
     .style("font-size", "14px")
     .text("Time (Years)")
 
-// Y axis
+// Y axis (CO2)
 svg.append("text")
     .attr("class", "axis-label y-axis-label")
     .attr("x", -(margin.top + (height - margin.top - margin.bottom) / 2))
@@ -41,7 +92,19 @@ svg.append("text")
     .attr("transform", "rotate(-90)")
     .style("text-anchor", "middle")
     .style("font-size", "14px")
+    .style("fill", "steelblue")
     .text("CO2 Concentration (ppm)")
+
+// Y Axis (CH4)
+svg.append("text")
+    .attr("class", "axis-label y-axis-label")
+    .attr("x", margin.left + 100)
+    .attr("y", -(margin.top + height + 50))
+    .attr("transform", "rotate(90)")
+    .style("text-anchor", "middle")
+    .style("font-size", "14px")
+    .style("fill", "#B87333")
+    .text("CH4 Concentration (ppb)")
 
 // read the data (for CO2)
 
@@ -73,7 +136,8 @@ d3.text("data/CO2-line-chart.csv").then(
             .range([ height, 0 ])
             .nice();
         svg.append("g")
-            .call(d3.axisLeft(y));
+            .call(d3.axisLeft(y))
+            .style("color", "steelblue");
 
         // Add the line
         svg.append("path")
@@ -109,9 +173,6 @@ d3.text("data/CH4-line-chart.csv").then(
         const x = d3.scaleTime()
             .domain(d3.extent(data, function(d) { return d.date; }))
             .range([0, width]);
-        // svg.append("g")
-        //     .attr("transform", `translate(0, ${height})`)
-        //     .call(d3.axisBottom(x));
         
         // Y axis
         const y = d3.scaleLinear()
@@ -120,13 +181,14 @@ d3.text("data/CH4-line-chart.csv").then(
             .nice();
         svg.append("g")
             .attr("transform", `translate(${width}, 0)`)
-            .call(d3.axisRight(y));
+            .call(d3.axisRight(y))
+            .style("color", "#B87333");
 
         // Add the line
         svg.append("path")
             .datum(data)
             .attr("fill", "none")
-            .attr("stroke", "orange")
+            .attr("stroke", "#B87333")
             .attr("stroke-width", 1.5)
             .attr("d", d3.line()
                 .x(function(d) { return x(d.date) })
