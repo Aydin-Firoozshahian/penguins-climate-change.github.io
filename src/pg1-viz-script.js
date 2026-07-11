@@ -4,10 +4,11 @@ const  margin = {top: 60, right: 40, bottom: 40, left: 60},
     height = 400 - margin.top - margin.bottom;
 
 // put the svg object for the visualization in the div container in the html
-const svg = d3.select("#pg1-viz")
+const svg = d3.select("#intro-graphs-container")
     .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${width} ${height}`) // scale graph dimensions with dimensions of parent container (accounts for changes in window size)
         .style("overflow", "visible")
     .append("g")
         .attr("transform", `translate(${margin.left}, ${margin.top})`);
@@ -50,28 +51,6 @@ svg.append("text")
     .attr("y", legendHeight+5)
     .style("color", "black")
     .text("CH4")
-    
-
-// svg.append("text")
-//     .attr("x", (width / 2))
-//     .attr("y", 0 - (margin.top / 2) + 20)
-//     .style("text-anchor", "middle")
-//     .style("font-size", "16px")
-//     .style("padding", "10px")
-//     .append("tspan")
-//         .text("-")
-//         .style("fill", "steelblue")
-//     .append("tspan")
-//         .text("CO2")
-//         .attr("dx", "10px")
-//         .style("fill", "black")
-//     .append("tspan")
-//         .text("- ")
-//         .attr("dx", "50px")
-//         .style("fill", "#B87333")
-//     .append("tspan")
-//         .text("CH4")
-//         .style("fill", "black")
 
 // Add the x axis and y axis labels
 
