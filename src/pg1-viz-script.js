@@ -140,7 +140,7 @@ d3.text("data/CO2-line-chart.csv").then(
 
         carbonLine
             .attr("stroke-dasharray", carbonLineLength + " " + carbonLineLength)
-            .attr("stroke-dashoffset", carbonLineLength);
+            .attr("stroke-dashoffset", carbonLineLength); // hides the line
             
         const intersectionObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach((entry) => {
@@ -148,6 +148,9 @@ d3.text("data/CO2-line-chart.csv").then(
                     carbonLine.transition()
                         .duration(2000)
                         .attr("stroke-dashoffset", 0);
+                }
+                else {
+                    carbonLine.attr("stroke-dashoffset", carbonLineLength);
                 }
             });
         }, options);
@@ -222,6 +225,9 @@ d3.text("data/CH4-line-chart.csv").then(
                     methaneLine.transition()
                         .duration(2000)
                         .attr("stroke-dashoffset", 0);
+                }
+                else {
+                    methaneLine.attr("stroke-dashoffset", methaneLineLength);
                 }
             });
         }, options);
