@@ -77,13 +77,19 @@ svg.append("text")
 // Y Axis (CH4)
 svg.append("text")
     .attr("class", "axis-label y-axis-label")
-    .attr("x", margin.left + 100)
+    .attr("x", margin.left + 105)
     .attr("y", -(margin.top + height + 50))
     .attr("transform", "rotate(90)")
     .style("text-anchor", "middle")
     .style("font-size", "14px")
     .style("fill", "#B87333")
     .text("CH4 Concentration (ppb)")
+
+// Set up graph animation
+let options = {
+    root: null,
+    threshold: 0.3
+};
 
 // read the data (for CO2)
 
@@ -119,7 +125,7 @@ d3.text("data/CO2-line-chart.csv").then(
             .style("color", "steelblue");
 
         // Add the line
-        svg.append("path")
+        carbonLine = svg.append("path")
             .datum(data)
             .attr("fill", "none")
             .attr("stroke", "steelblue")
@@ -127,13 +133,36 @@ d3.text("data/CO2-line-chart.csv").then(
             .attr("d", d3.line()
                 .x(function(d) { return x(d.date) })
                 .y(function(d) { return y(d.value) })
-                )       
+                );
+        
+        // calculate total length of line
+        const carbonLineLength = carbonLine.node().getTotalLength();
+
+        carbonLine
+            .attr("stroke-dasharray", carbonLineLength + " " + carbonLineLength)
+            .attr("stroke-dashoffset", carbonLineLength);
+            
+        const intersectionObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    carbonLine.transition()
+                        .duration(2000)
+                        .attr("stroke-dashoffset", 0);
+                }
+            });
+        }, options);
+
+        intersectionObserver.observe(document.querySelector("#intro-graphs-container"));
+                
     }
 ).catch(function(error) {
     console.error("Error loading or parsing CSV data: " + error);
 });
 
 // read the data for CH4
+
+let carbonLine;
+let methaneLine;
 
 d3.text("data/CH4-line-chart.csv").then(
     function (text) {
@@ -164,7 +193,7 @@ d3.text("data/CH4-line-chart.csv").then(
             .style("color", "#B87333");
 
         // Add the line
-        svg.append("path")
+        methaneLine = svg.append("path")
             .datum(data)
             .attr("fill", "none")
             .attr("stroke", "#B87333")
@@ -172,22 +201,33 @@ d3.text("data/CH4-line-chart.csv").then(
             .attr("d", d3.line()
                 .x(function(d) { return x(d.date) })
                 .y(function(d) { return y(d.value) })
-                )       
+            );
+            
+        // calculate total length of line
+        const methaneLineLength = methaneLine.node().getTotalLength();
+
+        methaneLine
+            .attr("stroke-dasharray", methaneLineLength + " " + methaneLineLength)
+            .attr("stroke-dashoffset", methaneLineLength);
+        
+        // Set up graph animation
+        const options = {
+            root: null,
+            threshold: 0.3
+        };
+            
+        const intersectionObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    methaneLine.transition()
+                        .duration(2000)
+                        .attr("stroke-dashoffset", 0);
+                }
+            });
+        }, options);
+
+        intersectionObserver.observe(document.querySelector("#intro-graphs-container"));
     }
 ).catch(function(error) {
     console.error("Error loading or parsing CSV data: " + error);
 });
-    
-
-// d3.csv("src/CO2-line-chart.csv",
-
-//     // format the variables for the data in order to read it
-//     function(d){
-//     return { date : d3.timeParse("%Y-%m")(d.date), value : d.value }
-//     }).then(
-        
-//         // Actually use the data to draw the graph
-//         function(data) {
-
-            
-// })
