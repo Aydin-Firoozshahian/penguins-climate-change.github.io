@@ -212,12 +212,6 @@ d3.text("data/CH4-line-chart.csv").then(
         methaneLine
             .attr("stroke-dasharray", methaneLineLength + " " + methaneLineLength)
             .attr("stroke-dashoffset", methaneLineLength);
-        
-        // Set up graph animation
-        const options = {
-            root: null,
-            threshold: 0.3
-        };
             
         const intersectionObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach((entry) => {
