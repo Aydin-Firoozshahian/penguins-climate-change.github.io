@@ -44,7 +44,7 @@ body {
 }
 
 /* Sticky Container Mechanics */
-.graph-container, #adelie-graphs-container {
+.graph-container {
     flex: 1;
     position: sticky;
     top: 15vh;
@@ -52,7 +52,7 @@ body {
     width: 100%;
     display: flex;
     justify-content: left;
-    align-items: flex-start;
+    /*align-items: flex-start; */
     background: #ffffff;
     border-radius: 16px;
     box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
@@ -70,10 +70,10 @@ body {
     max-width: 95%;
     max-height: 95%;
     object-fit: contain;
-    opacity: 0.2;
+    /*opacity: 0.2;
     transform: scale(0.85) translateY(20px);
     filter: grayscale(100%);
-    transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1); */
 }
 
 .graph-container svg {
@@ -89,21 +89,13 @@ body {
 }
 
 /* Nested Absolute Stack Configuration for Section 4 (Adelie) */
+
 #adelie-graphs-container {
     background: transparent;
     box-shadow: none;
     padding: 0;
-}
-
-#adelie-graphs-container .graph-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.6s ease, transform 0.6s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 #adelie-graphs-container .graph-container.active-graph {
